@@ -49,7 +49,6 @@ class IrAttachment(models.Model):
         # host = os.environ.get("AWS_HOST")
         environment = os.environ.get("ODOO_STAGE")
         s3 = config.misc.get("%s_storage_s3" % environment, {})
-        breakpoint()
         host = s3.get("aws_host")
 
         # Ensure host is prefixed with a scheme (use https as default)

@@ -6,6 +6,8 @@ import io
 import logging
 import os
 from urllib.parse import urlsplit
+from odoo.tools import config
+
 
 from odoo import _, api, exceptions, models
 
@@ -44,16 +46,24 @@ class IrAttachment(models.Model):
         from the environment variable ``AWS_BUCKETNAME`` will be read.
 
         """
-        host = os.environ.get("AWS_HOST")
+        # host = os.environ.get("AWS_HOST")
+        environment = os.environ.get("ODOO_STAGE")
+        s3 = config.misc.get("%s_storage_s3" % environment, {})
+        breakpoint()
+        host = s3.get("aws_host")
 
         # Ensure host is prefixed with a scheme (use https as default)
         if host and not urlsplit(host).scheme:
             host = "https://%s" % host
 
-        region_name = os.environ.get("AWS_REGION")
-        access_key = os.environ.get("AWS_ACCESS_KEY_ID")
-        secret_key = os.environ.get("AWS_SECRET_ACCESS_KEY")
-        bucket_name = name or os.environ.get("AWS_BUCKETNAME")
+        # region_name = os.environ.get("AWS_REGION")
+        region_name = s3.get("AWS_REGION")
+        # access_key = os.environ.get("AWS_ACCESS_KEY_ID")
+        access_key = s3.get("aws_access_key_id")
+        # secret_key = os.environ.get("AWS_SECRET_ACCESS_KEY")
+        secret_key = s3.get("aws_secret_access_key")
+        # bucket_name = name or os.environ.get("AWS_BUCKETNAME")
+        bucket_name = name or s3.get("aws_bucketname")
         # replaces {db} by the database name to handle multi-tenancy
         bucket_name = bucket_name.format(db=self.env.cr.dbname)
 

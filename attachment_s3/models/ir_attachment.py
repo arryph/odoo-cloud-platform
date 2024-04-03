@@ -171,7 +171,9 @@ class IrAttachment(models.Model):
             item_name = s3uri.item()
             # delete the file only if it is on the current configured bucket
             # otherwise, we might delete files used on a different environment
-            if bucket_name == os.environ.get("AWS_BUCKETNAME"):
+            environment = os.environ.get("ODOO_STAGE")
+            s3 = config.misc.get("%s_storage_s3" % environment, {})
+            if bucket_name == s3.get("AWS_BUCKETNAME"):
                 bucket = self._get_s3_bucket()
                 obj = bucket.Object(key=item_name)
                 try:

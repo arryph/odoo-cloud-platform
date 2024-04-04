@@ -409,7 +409,7 @@ class IrAttachment(models.Model):
         # the installation
         with self.do_in_new_env(new_cr=new_cr) as new_env:
             model_env = new_env["ir.attachment"]
-            ids = model_env.search(domain).ids
+            ids = model_env.search(domain, limit=100).ids
             files_to_clean = []
             for attachment_id in ids:
                 try:
